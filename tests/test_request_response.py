@@ -17,15 +17,16 @@ categories = {
 pets_list = []
 
 
-def prepare_pets_to_post():
+@pytest.fixture(scope='class', autouse=True)
+def f_wrapper_class():
     pets_data = [["Dolly", 4], ["Che", 2], ["Pinki", 2], ["Elky", 3], ["Norma", 1],
                  ["Jutah", 1], ["Jessie", 1], ["Kesha", 6], ["Monty", 5]]
     for new_pet in pets_data:
         pets_list.append(Pet(new_pet[0], categories[str(new_pet[1])], new_pet[1]))
+    yield
 
 
 class TestGetAndPostPets:
-    prepare_pets_to_post()
 
     def test_is_request_ok(self):
         response = requests.get(BASE_URL)
@@ -48,7 +49,7 @@ class TestGetAndPostPets:
         response = requests.get(BASE_URL + POST_GET_URI + FIND_BY_STATUS +
                                 f"?status={pets_list[3].status}")
         response_to_list = list(response.json())
-        dolly = False
+        elky = False
         for pet_item in response_to_list:
             if pet_item["name"] == "Elky":
                 elky = True
