@@ -41,14 +41,18 @@ class TestGetAndPostPets:
             assert request_post.status_code == 200
 
     def test_find_pet_by_id(self):
-        response = requests.get(BASE_URL + POST_GET_URI + f"/{pets_list[3].id}")
+        response = requests.get(BASE_URL + POST_GET_URI + f"/{pets_list[0].id}")
         assert response.status_code == 200
 
-    def test_is_dog_present(self):
+    def test_is_elky_present(self):
         response = requests.get(BASE_URL + POST_GET_URI + FIND_BY_STATUS +
-                                "?status=sold&status=pending&status=available")
-        res_to_json = dict(response.json())
-        assert "Dog" in res_to_json
+                                f"?status={pets_list[3].status}")
+        response_to_list = list(response.json())
+        dolly = False
+        for pet_item in response_to_list:
+            if pet_item["name"] == "Elky":
+                elky = True
+        assert elky
 
     @pytest.mark.xfail
     def test_is_nemo_present(self):
